@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hello World Interactive</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0a0a0f;
+      min-height: 100vh;
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+      cursor: none;
+    }
+
+    #canvas {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .hello {
+      position: absolute;
+      font-weight: 700;
+      white-space: nowrap;
+      user-select: none;
+      cursor: none;
+      transition: transform 0.1s ease, opacity 0.3s ease;
+      will-change: transform, color, filter;
+    }
+
+    #cursor {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255,255,255,0.8);
+      border-radius: 50%;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s, background 0.2s;
+      z-index: 9999;
+    }
+
+    #cursor.clicked {
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.15);
+    }
+
+    #ripple-container {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 9998;
+    }
+
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      animation: ripple-out 0.6s ease-out forwards;
+      pointer-events: none;
+    }
+
+    @keyframes ripple-out {
+      to { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+    }
+
+    #info {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.25);
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      z-index: 1000;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+<div id="canvas"></div>
+<div id="cursor"></div>
+<div id="ripple-container"></div>
+<p id="info">마우스를 움직이거나 클릭해보세요</p>
+
+<script>
+  const canvas = document.getElementById('canvas');
+  const cursor = document.getElementById('cursor');
+  const rippleContainer = document.getElementById('ripple-container');
+
+  const COLORS = [
+    '#ff6b6b', '#ff9f43', '#ffd32a', '#0be881', '#48dbfb',
+    '#ff9ff3', '#54a0ff', '#5f27cd', '#ff6b81', '#00d2d3',
+    '#ff4757', '#eccc68', '#7bed9f', '#70a1ff', '#a29bfe',
+    '#fd79a8', '#fdcb6e', '#6c5ce7', '#00cec9', '#e17055',
+  ];
+
+  const SIZES = [12, 14, 16, 18, 20, 24, 28, 32, 36, 40, 48, 56, 64];
+
+  const EFFECTS = ['float', 'spin', 'pulse', 'wave', 'bounce'];
+
+  let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+  let items = [];
+
+  function randomBetween(a, b) {
+    return a + Math.random() * (b - a);
+  }
+
+  function randomItem(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  function createHello() {
+    const el = document.createElement('span');
+    el.className = 'hello';
+    el.textContent = 'Hello World';
+
+    const size = randomItem(SIZES);
+    const color = randomItem(COLORS);
+    const effect = randomItem(EFFECTS);
+    const x = randomBetween(0, window.innerWidth - 200);
+    const y = randomBetween(0, window.innerHeight - 80);
+    const opacity = randomBetween(0.15, 0.9);
+    const speed = randomBetween(0.5, 3);
+    const phase = randomBetween(0, Math.PI * 2);
+
+    el.style.fontSize = size + 'px';
+    el.style.color = color;
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    el.style.opacity = opacity;
+    el.style.textShadow = `0 0 ${size * 0.5}px ${color}`;
+
+    const item = { el, x, y, size, color, effect, speed, phase, opacity, baseX: x, baseY: y, vx: 0, vy: 0, repelling: false };
+    items.push(item);
+    canvas.appendChild(el);
+
+    el.addEventListener('mouseenter', () => onEnter(item));
+    el.addEventListener('click', () => onClickItem(item));
+
+    return item;
+  }
+
+  function onEnter(item) {
+    const newColor = randomItem(COLORS);
+    item.color = newColor;
+    item.el.style.color = newColor;
+    item.el.style.textShadow = `0 0 ${item.size * 0.8}px ${newColor}`;
+  }
+
+  function onClickItem(item) {
+    item.el.style.fontSize = (item.size * 2) + 'px';
+    item.el.style.opacity = '1';
+    setTimeout(() => {
+      item.el.style.fontSize = item.size + 'px';
+      item.el.style.opacity = item.opacity;
+    }, 400);
+  }
+
+  // Spawn 60 hello words
+  for (let i = 0; i < 60; i++) createHello();
+
+  // Mouse tracking
+  document.addEventListener('mousemove', (e) => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+    cursor.style.left = mouse.x + 'px';
+    cursor.style.top = mouse.y + 'px';
+  });
+
+  document.addEventListener('click', (e) => {
+    cursor.classList.add('clicked');
+    setTimeout(() => cursor.classList.remove('clicked'), 200);
+    createRipple(e.clientX, e.clientY);
+    scatterNear(e.clientX, e.clientY, 120);
+  });
+
+  function createRipple(x, y) {
+    const r = document.createElement('div');
+    r.className = 'ripple';
+    const size = randomBetween(80, 200);
+    const color = randomItem(COLORS);
+    r.style.width = size + 'px';
+    r.style.height = size + 'px';
+    r.style.left = x + 'px';
+    r.style.top = y + 'px';
+    r.style.border = `2px solid ${color}`;
+    rippleContainer.appendChild(r);
+    setTimeout(() => r.remove(), 700);
+  }
+
+  function scatterNear(cx, cy, radius) {
+    items.forEach(item => {
+      const dx = item.x - cx;
+      const dy = item.y - cy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < radius) {
+        const force = (radius - dist) / radius;
+        item.vx += (dx / (dist + 1)) * force * 15;
+        item.vy += (dy / (dist + 1)) * force * 15;
+        item.repelling = true;
+      }
+    });
+  }
+
+  // Animation loop
+  let t = 0;
+  function animate() {
+    t += 0.016;
+
+    items.forEach((item, i) => {
+      const { effect, speed, phase } = item;
+
+      // Repulsion from mouse
+      const mdx = item.x - mouse.x;
+      const mdy = item.y - mouse.y;
+      const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+      const repelRadius = 100;
+
+      if (mdist < repelRadius && mdist > 0) {
+        const force = ((repelRadius - mdist) / repelRadius) * 2;
+        item.vx += (mdx / mdist) * force;
+        item.vy += (mdy / mdist) * force;
+      }
+
+      // Velocity decay & drift back
+      item.vx *= 0.9;
+      item.vy *= 0.9;
+      item.x += item.vx;
+      item.y += item.vy;
+
+      // Drift toward base
+      item.x += (item.baseX - item.x) * 0.02;
+      item.y += (item.baseY - item.y) * 0.02;
+
+      // Effect offset
+      let ox = 0, oy = 0;
+      const s = t * speed + phase;
+
+      if (effect === 'float') {
+        oy = Math.sin(s) * 8;
+      } else if (effect === 'wave') {
+        ox = Math.sin(s) * 10;
+        oy = Math.cos(s * 0.7) * 6;
+      } else if (effect === 'bounce') {
+        oy = Math.abs(Math.sin(s * 1.5)) * -12;
+      } else if (effect === 'spin') {
+        const r = 5;
+        ox = Math.cos(s) * r;
+        oy = Math.sin(s) * r;
+        item.el.style.transform = `rotate(${s * 30}deg)`;
+      } else if (effect === 'pulse') {
+        const scale = 1 + Math.sin(s * 2) * 0.12;
+        item.el.style.transform = `scale(${scale})`;
+      }
+
+      if (effect !== 'spin' && effect !== 'pulse') {
+        item.el.style.transform = 'none';
+      }
+
+      item.el.style.left = (item.x + ox) + 'px';
+      item.el.style.top = (item.y + oy) + 'px';
+    });
+
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+
+  // Resize: reposition base positions
+  window.addEventListener('resize', () => {
+    items.forEach(item => {
+      item.baseX = randomBetween(0, window.innerWidth - 200);
+      item.baseY = randomBetween(0, window.innerHeight - 80);
+    });
+  });
+</script>
+</body>
+</html>
