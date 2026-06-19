@@ -28,6 +28,8 @@ body { background-color: #F4F6F8; min-height: 100vh; display: flex; align-items:
 
 .btn-primary { width: 100%; height: 52px; background-color: #1A6FD6; color: #FFFFFF; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background 0.2s; }
 .btn-primary:hover { background-color: #1459AD; }
+.btn-primary:disabled, .btn-primary.disabled { background-color: #C7CDD3; color: #FFFFFF; cursor: not-allowed; }
+.btn-primary:disabled:hover, .btn-primary.disabled:hover { background-color: #C7CDD3; }
 .btn-sub { width: 100%; height: 52px; background-color: #E5E8EB; color: #4E5968; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; justify-content: center; align-items: center; }
 
 .app-card { background: #FFFFFF; border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 14px; }
@@ -355,7 +357,7 @@ img-mock { display: flex; width: 100%; height: 160px; background-color: #F2F4F6;
   <div class="app-screen" id="screen-c07">
     <div class="status-bar"></div>
     <div class="nav-header"><div class="back-btn" onclick="window.__finstep.back()"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg></div><div class="title">지식 탐독</div><div class="right-btn"><svg class="icon-svg" style="color:#B0B8C1" viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg></div></div>
-    <div class="detail-container">
+    <div class="detail-container" id="detailScrollArea">
       <div class="detail-header-tags"><span class="badge primary">재무제표</span><span class="badge gray">초급</span><span class="badge gray">읽기 3분</span></div>
       <h2 class="detail-title">영업이익과 당기순이익의 차이점, 3분만에 마스터하기</h2>
       <div class="detail-body">
@@ -363,9 +365,14 @@ img-mock { display: flex; width: 100%; height: 160px; background-color: #F2F4F6;
         <p><strong>영업이익이란?</strong> 회사가 본업을 통해 순수하게 벌어들인 돈을 뜻합니다. 매출액에서 매출원가와 판매비, 관리비를 뺀 금액입니다.</p>
         <img-mock>[ 일러스트: 매출 구조 시각화 자료 ]</img-mock>
         <p><strong>당기순이익이란?</strong> 영업이익에서 본업 외의 활동으로 생기거나 잃은 돈(영업외손익, 세금 등)을 모두 더하고 뺀 최종 성적표입니다.</p>
+        <p>실제 재무제표를 볼 때는 두 지표를 함께 비교해보는 습관이 중요해요. 영업이익은 꾸준히 늘어나는데 당기순이익만 들쭉날쭉하다면, 일회성 손익 때문일 가능성이 높습니다. 반대의 경우라면 본업 경쟁력 자체를 의심해봐야 해요.</p>
+        <p>다음 콘텐츠에서는 이 두 지표가 실제 기업 사례에서 어떻게 다르게 움직이는지 구체적인 숫자로 살펴볼게요.</p>
       </div>
       <div class="ad-banner-mock">AdMob 배너 광고 영역</div>
-      <div style="margin-top:24px"><button class="btn-primary" onclick="window.__finstep.push('c09')">퀴즈 풀고 10P 받기</button></div>
+      <div style="margin-top:24px">
+        <button class="btn-primary disabled" id="detailQuizBtn" disabled onclick="window.__finstep.push('c09')">콘텐츠를 끝까지 읽어주세요 (15초)</button>
+        <p style="font-size:11px;color:#8B95A1;text-align:center;margin-top:8px">스크롤을 내려 콘텐츠를 읽고 15초가 지나면 퀴즈에 응시할 수 있어요</p>
+      </div>
     </div>
   </div>
 
@@ -463,7 +470,7 @@ img-mock { display: flex; width: 100%; height: 160px; background-color: #F2F4F6;
         <div style="font-size:13px;color:#1A6FD6;font-weight:600;margin-top:2px">LV.3 분석전문가 · 740 IKS</div>
         <div class="radar-chart-mock">[ 카테고리별 역량 분석 레이더 차트 ]</div>
       </div>
-      <div class="app-card"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:12px;color:#8B95A1">보유 가용 포인트</div><div style="font-size:18px;font-weight:700;color:#F2A900;margin-top:2px">5,450 P</div></div><button class="btn-sm-action" onclick="window.__finstep.push('c14')">전환하기</button></div></div>
+      <div class="app-card"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:12px;color:#8B95A1">보유 가용 포인트</div><div style="font-size:18px;font-weight:700;color:#F2A900;margin-top:2px" id="mypagePointsValue">5,450 P</div></div><button class="btn-sm-action" onclick="window.__finstep.setTab('c18')">교환소 가기</button></div></div>
       <div class="app-card" style="padding:4px 14px">
         <div class="menu-item" onclick="window.__finstep.toast('준비 중인 기능입니다')"><span>북마크 보관함</span><span>></span></div>
         <div class="menu-item" onclick="window.__finstep.push('c16')"><span>오답 복습노트</span><span>></span></div>
@@ -474,18 +481,37 @@ img-mock { display: flex; width: 100%; height: 160px; background-color: #F2F4F6;
     <nav class="tab-bar" data-tab-root="my"></nav>
   </div>
 
-  <!-- C-14 point conversion -->
-  <div class="app-screen" id="screen-c14">
+  <!-- C-18 exchange store (tab root) -->
+  <div class="app-screen" id="screen-c18">
     <div class="status-bar"></div>
-    <div class="nav-header"><div class="back-btn" onclick="window.__finstep.back()">◁</div><div class="title">포인트 상품 전환</div><div style="font-size:13px;color:#4E5968" onclick="window.__finstep.toast('전환 내역이 없습니다')">내역</div></div>
+    <div class="nav-header"><div></div><div class="title">포인트 교환소</div><div style="font-size:13px;color:#4E5968" onclick="window.__finstep.toast('교환 내역이 없습니다')">내역</div></div>
     <div class="mobile-content">
-      <div class="app-card" style="background-color:#FFF9E6;border:1px solid #FFE0B2"><span style="font-size:13px;color:#A67300;font-weight:600">전환 가능 포인트</span><div style="font-size:20px;font-weight:700;color:#F2A900;margin-top:2px">5,450 P</div></div>
+      <div class="iks-card">
+        <div class="iks-user">보유 포인트</div>
+        <div class="iks-row"><div class="iks-score" id="exchangePointsValue">5,450 P</div><div class="iks-level">교환소</div></div>
+      </div>
+
+      <div class="filter-tabs" style="padding:14px 0 8px">
+        <div class="tab-chip active" data-cat="all" onclick="window.__finstep.filterExchange(this)">전체</div>
+        <div class="tab-chip" data-cat="cafe" onclick="window.__finstep.filterExchange(this)">카페</div>
+        <div class="tab-chip" data-cat="bakery" onclick="window.__finstep.filterExchange(this)">베이커리</div>
+        <div class="tab-chip" data-cat="cvs" onclick="window.__finstep.filterExchange(this)">편의점</div>
+        <div class="tab-chip" data-cat="pay" onclick="window.__finstep.filterExchange(this)">간편결제</div>
+      </div>
+
       <div class="app-card" style="padding:8px 16px">
-        <div class="gift-row"><div style="display:flex;gap:12px;align-items:center"><div class="gift-img">☕</div><div><div style="font-size:14px;font-weight:700">스타벅스 아이스 아메리카노</div><div style="font-size:12px;color:#8B95A1">4,500 P</div></div></div><button class="btn-sm-action" onclick="window.__finstep.toast('교환 신청 완료!')">교환</button></div>
-        <div class="gift-row"><div style="display:flex;gap:12px;align-items:center"><div class="gift-img">🏪</div><div><div style="font-size:14px;font-weight:700">GS25 모바일 금액권 5천원</div><div style="font-size:12px;color:#8B95A1">5,000 P</div></div></div><button class="btn-sm-action" onclick="window.__finstep.toast('교환 신청 완료!')">교환</button></div>
-        <div class="gift-row"><div style="display:flex;gap:12px;align-items:center"><div class="gift-img">💚</div><div><div style="font-size:14px;font-weight:700">네이버페이 포인트 1,000원권</div><div style="font-size:12px;color:#8B95A1">1,000 P</div></div></div><button class="btn-sm-action" onclick="window.__finstep.toast('교환 신청 완료!')">교환</button></div>
+        <div class="gift-row exchange-item" data-cat="cafe"><div style="display:flex;gap:12px;align-items:center"><div class="gift-img">☕</div><div><div style="font-size:14px;font-weight:700">스타벅스 아이스 아메리카노</div><div style="font-size:12px;color:#8B95A1">4,500 P</div></div></div><button class="btn-sm-action" onclick="window.__finstep.exchangeItem(4500,'스타벅스 아이스 아메리카노')">교환</button></div>
+        <div class="gift-row exchange-item" data-cat="cafe"><div style="display:flex;gap:12px;align-items:center"><div class="gift-img">🥤</div><div><div style="font-size:14px;font-weight:700">메가MGC커피 아메리카노</div><div style="font-size:12px;color:#8B95A1">2,000 P</div></div></div><button class="btn-sm-action" onclick="window.__finstep.exchangeItem(2000,'메가MGC커피 아메리카노')">교환</button></div>
+        <div class="gift-row exchange-item" data-cat="cafe"><div style="display:flex;gap:12px;align-items:center"><div class="gift-img">🍵</div><div><div style="font-size:14px;font-weight:700">컴포즈커피 아메리카노</div><div style="font-size:12px;color:#8B95A1">1,800 P</div></div></div><button class="btn-sm-action" onclick="window.__finstep.exchangeItem(1800,'컴포즈커피 아메리카노')">교환</button></div>
+        <div class="gift-row exchange-item" data-cat="bakery"><div style="display:flex;gap:12px;align-items:center"><div class="gift-img">🥐</div><div><div style="font-size:14px;font-weight:700">파리바게뜨 모카빵 교환권</div><div style="font-size:12px;color:#8B95A1">3,000 P</div></div></div><button class="btn-sm-action" onclick="window.__finstep.exchangeItem(3000,'파리바게뜨 모카빵 교환권')">교환</button></div>
+        <div class="gift-row exchange-item" data-cat="bakery"><div style="display:flex;gap:12px;align-items:center"><div class="gift-img">🍞</div><div><div style="font-size:14px;font-weight:700">뚜레쥬르 식빵 교환권</div><div style="font-size:12px;color:#8B95A1">3,500 P</div></div></div><button class="btn-sm-action" onclick="window.__finstep.exchangeItem(3500,'뚜레쥬르 식빵 교환권')">교환</button></div>
+        <div class="gift-row exchange-item" data-cat="cvs"><div style="display:flex;gap:12px;align-items:center"><div class="gift-img">🏪</div><div><div style="font-size:14px;font-weight:700">GS25 모바일 금액권 5천원</div><div style="font-size:12px;color:#8B95A1">5,000 P</div></div></div><button class="btn-sm-action" onclick="window.__finstep.exchangeItem(5000,'GS25 모바일 금액권')">교환</button></div>
+        <div class="gift-row exchange-item" data-cat="cvs"><div style="display:flex;gap:12px;align-items:center"><div class="gift-img">🏪</div><div><div style="font-size:14px;font-weight:700">CU 모바일 금액권 5천원</div><div style="font-size:12px;color:#8B95A1">5,000 P</div></div></div><button class="btn-sm-action" onclick="window.__finstep.exchangeItem(5000,'CU 모바일 금액권')">교환</button></div>
+        <div class="gift-row exchange-item" data-cat="pay"><div style="display:flex;gap:12px;align-items:center"><div class="gift-img">💛</div><div><div style="font-size:14px;font-weight:700">카카오페이 포인트 1,000원</div><div style="font-size:12px;color:#8B95A1">1,000 P</div></div></div><button class="btn-sm-action" onclick="window.__finstep.exchangeItem(1000,'카카오페이 포인트')">교환</button></div>
+        <div class="gift-row exchange-item" data-cat="pay"><div style="display:flex;gap:12px;align-items:center"><div class="gift-img">💚</div><div><div style="font-size:14px;font-weight:700">네이버페이 포인트 1,000원</div><div style="font-size:12px;color:#8B95A1">1,000 P</div></div></div><button class="btn-sm-action" onclick="window.__finstep.exchangeItem(1000,'네이버페이 포인트')">교환</button></div>
       </div>
     </div>
+    <nav class="tab-bar" data-tab-root="exchange"></nav>
   </div>
 
   <!-- C-15 invite -->
@@ -561,13 +587,15 @@ img-mock { display: flex; width: 100%; height: 160px; background-color: #F2F4F6;
   }
 
   function tabBarHTML(active){
+    var routes = {home:'c05',learn:'c06',rank:'c12',exchange:'c18',my:'c13'};
     function item(key, label, path){
       var cls = 'tab-item' + (active===key ? ' active' : '');
-      return '<a class="'+cls+'" onclick="window.__finstep.setTab(\''+({home:'c05',learn:'c06',rank:'c12',my:'c13'})[key]+'\')"><svg viewBox="0 0 24 24">'+path+'</svg><span>'+label+'</span></a>';
+      return '<a class="'+cls+'" onclick="window.__finstep.setTab(\''+routes[key]+'\')"><svg viewBox="0 0 24 24">'+path+'</svg><span>'+label+'</span></a>';
     }
     return item('home','홈','<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>') +
            item('learn','학습','<path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5.47 18.6l6.53 3.56 6.53-3.56v-2.8l-6.53 3.56-6.53-3.56v2.8z"/>') +
            item('rank','랭킹','<path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0 0 11 15.9V19H7v2h10v-2h-4v-3.1a5.01 5.01 0 0 0 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.47 5 9.32 5 8zm14 0c0 1.32-.84 2.47-2 2.82V7h2v1z"/>') +
+           item('exchange','교환소','<path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83l1.41 1.41L12 8.66l3.59 3.58L17 10.83 14.92 8H20v6z"/>') +
            item('my','마이','<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>');
   }
 
@@ -582,14 +610,14 @@ img-mock { display: flex; width: 100%; height: 160px; background-color: #F2F4F6;
   function render(){
     var id = screenStack[screenStack.length-1];
     screens().forEach(function(s){ s.classList.toggle('active', s.id === 'screen-'+id); });
-    var rootMap = { c05:'home', c06:'learn', c12:'rank', c13:'my' };
+    var rootMap = { c05:'home', c06:'learn', c12:'rank', c18:'exchange', c13:'my' };
     if(rootMap[id]){
       var bar = document.querySelector('#screen-'+id+' .tab-bar');
       if(bar) bar.innerHTML = tabBarHTML(rootMap[id]);
     }
   }
 
-  function push(id){ screenStack.push(id); render(); }
+  function push(id){ screenStack.push(id); render(); if(id==='c07'){ startDetailGate(); } }
   function back(){ if(screenStack.length>1){ screenStack.pop(); render(); } }
   function setTab(id){ screenStack = [id]; render(); }
   function replace(id){ screenStack[screenStack.length-1] = id; render(); }
@@ -661,6 +689,83 @@ img-mock { display: flex; width: 100%; height: 160px; background-color: #F2F4F6;
     if(!wasOpen) item.classList.add('open');
   }
 
+  // ---- C-18 exchange store ----
+  var userPoints = 5450;
+  function formatPoints(n){ return n.toLocaleString('ko-KR') + ' P'; }
+  function updatePointsDisplay(){
+    var a = document.getElementById('exchangePointsValue'); if(a) a.textContent = formatPoints(userPoints);
+    var b = document.getElementById('mypagePointsValue'); if(b) b.textContent = formatPoints(userPoints);
+  }
+  function exchangeItem(cost, name){
+    if(userPoints >= cost){
+      userPoints -= cost;
+      updatePointsDisplay();
+      toast(name + ' 교환 완료!');
+    } else {
+      toast('포인트가 부족해요');
+    }
+  }
+  function filterExchange(chip){
+    var group = chip.parentElement;
+    group.querySelectorAll('.tab-chip').forEach(function(c){ c.classList.remove('active'); });
+    chip.classList.add('active');
+    var cat = chip.dataset.cat;
+    document.querySelectorAll('.exchange-item').forEach(function(item){
+      item.style.display = (cat === 'all' || item.dataset.cat === cat) ? 'flex' : 'none';
+    });
+  }
+
+  // ---- C-07 content detail read-gate: 15s + scroll required before quiz unlocks ----
+  var detailTimer = null;
+  var detailRemaining = 15;
+  var detailScrolled = false;
+
+  function startDetailGate(){
+    clearInterval(detailTimer);
+    detailRemaining = 15;
+    detailScrolled = false;
+    var btn = document.getElementById('detailQuizBtn');
+    if(!btn) return;
+    btn.disabled = true;
+    btn.classList.add('disabled');
+    var area = document.getElementById('detailScrollArea');
+    if(area) area.scrollTop = 0;
+    updateDetailBtnText();
+    detailTimer = setInterval(function(){
+      detailRemaining--;
+      if(detailRemaining <= 0){ detailRemaining = 0; clearInterval(detailTimer); }
+      updateDetailBtnText();
+      checkDetailGate();
+    }, 1000);
+  }
+
+  function updateDetailBtnText(){
+    var btn = document.getElementById('detailQuizBtn');
+    if(!btn) return;
+    if(btn.disabled){
+      var needScroll = !detailScrolled;
+      if(detailRemaining > 0){
+        btn.textContent = '콘텐츠를 끝까지 읽어주세요 (' + detailRemaining + '초)';
+      } else if(needScroll){
+        btn.textContent = '콘텐츠를 스크롤해서 읽어주세요';
+      } else {
+        btn.textContent = '콘텐츠를 끝까지 읽어주세요';
+      }
+    } else {
+      btn.textContent = '퀴즈 풀고 10P 받기';
+    }
+  }
+
+  function checkDetailGate(){
+    var btn = document.getElementById('detailQuizBtn');
+    if(!btn) return;
+    if(detailRemaining <= 0 && detailScrolled){
+      btn.disabled = false;
+      btn.classList.remove('disabled');
+      updateDetailBtnText();
+    }
+  }
+
   window.__finstep = {
     push: push, back: back, setTab: setTab,
     skipSplash: skipSplash, nextTutorial: nextTutorial, skipTutorial: skipTutorial,
@@ -668,10 +773,19 @@ img-mock { display: flex; width: 100%; height: 160px; background-color: #F2F4F6;
     finishDiagnosis: finishDiagnosis, closePopup: closePopup,
     submitQuiz: submitQuiz, closeAd: closeAd,
     checkAttendance: checkAttendance, copyCode: copyCode,
-    toast: toast, toggleFaq: toggleFaq
+    toast: toast, toggleFaq: toggleFaq,
+    exchangeItem: exchangeItem, filterExchange: filterExchange
   };
 
-  document.addEventListener('DOMContentLoaded', init);
+  document.addEventListener('DOMContentLoaded', function(){
+    init();
+    var area = document.getElementById('detailScrollArea');
+    if(area){
+      area.addEventListener('scroll', function(){
+        if(area.scrollTop > 20){ detailScrolled = true; checkDetailGate(); }
+      });
+    }
+  });
 })();
 </script>
 </body>
